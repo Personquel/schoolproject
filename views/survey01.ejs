@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Survey - SurveyPro</title>
+    <link rel="stylesheet" href="modern-style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #667eea;
+        }
+        
+        .menu {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .menu-item {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-item:hover, .menu-item.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .survey-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .survey-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .survey-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        
+        .survey-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        
+        .progress-container {
+            background: #e9ecef;
+            border-radius: 50px;
+            height: 8px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 50px;
+        }
+        
+        .progress-text {
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .question-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.5s ease;
+        }
+        
+        .question-card.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .question-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 2rem;
+            line-height: 1.4;
+        }
+        
+        .options-container {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .option-item {
+            background: #f8f9fa;
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .option-item:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .option-item:hover::before {
+            left: 100%;
+        }
+        
+        .option-item.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .option-text {
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+        
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        
+        .nav-btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .btn-prev {
+            background: #e9ecef;
+            color: #666;
+        }
+        
+        .btn-prev:hover {
+            background: #dee2e6;
+        }
+        
+        .btn-next {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .completion-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        .completion-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .completion-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        
+        .completion-message {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        
+        .completion-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .completion-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        @media (max-width: 768px) {
+            .survey-container {
+                margin: 1rem auto;
+            }
+            
+            .question-card {
+                padding: 2rem;
+            }
+            
+            .survey-title {
+                font-size: 2rem;
+            }
+            
+            .menu {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <span class="logo-icon">🧊</span>
+            <span class="logo-text">FFS</span>
+        </div>
+        <nav class="menu">
+            <a href="/welcome" class="menu-item">Home</a>
+            <a href="/survey01" class="menu-item active">Survey</a>
+            <a href="/about" class="menu-item">About</a>
+            <a href="/contact" class="menu-item">Contact</a>
+        </nav>
+    </header>
+
+    <div class="survey-container">
+        <div class="survey-header">
+            <h1 class="survey-title">Student Survey</h1>
+            <p class="survey-subtitle">Help find your voice</p>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">Question 1 of 3</div>
+        </div>
+
+        <div id="surveyForm">
+            <!-- Question 1 -->
+            <div class="question-card active" data-question="1">
+                <div class="question-number">1</div>
+                <h2 class="question-text">How satisfied are you with our service?</h2>
+                <div class="options-container">
+                    <div class="option-item" data-value="very-satisfied">
+                        <div class="option-text">Very Satisfied 😊</div>
+                    </div>
+                    <div class="option-item" data-value="satisfied">
+                        <div class="option-text">Satisfied 🙂</div>
+                    </div>
+                    <div class="option-item" data-value="neutral">
+                        <div class="option-text">Neutral 😐</div>
+                    </div>
+                    <div class="option-item" data-value="dissatisfied">
+                        <div class="option-text">Dissatisfied 😞</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question-card" data-question="2">
+                <div class="question-number">2</div>
+                <h2 class="question-text">Would you recommend us to others?</h2>
+                <div class="options-container">
+                    <div class="option-item" data-value="definitely">
+                        <div class="option-text">Definitely! 👍</div>
+                    </div>
+                    <div class="option-item" data-value="probably">
+                        <div class="option-text">Probably 👌</div>
+                    </div>
+                    <div class="option-item" data-value="maybe">
+                        <div class="option-text">Maybe 🤔</div>
+                    </div>
+                    <div class="option-item" data-value="unlikely">
+                        <div class="option-text">Unlikely 👎</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question-card" data-question="3">
+                <div class="question-number">3</div>
+                <h2 class="question-text">How often do you use our service?</h2>
+                <div class="options-container">
+                    <div class="option-item" data-value="daily">
+                        <div class="option-text">Daily 📅</div>
+                    </div>
+                    <div class="option-item" data-value="weekly">
+                        <div class="option-text">Weekly 📊</div>
+                    </div>
+                    <div class="option-item" data-value="monthly">
+                        <div class="option-text">Monthly 🗓️</div>
+                    </div>
+                    <div class="option-item" data-value="rarely">
+                        <div class="option-text">Rarely ⏰</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="navigation-buttons">
+                <button class="nav-btn btn-prev" id="prevBtn" onclick="previousQuestion()">Previous</button>
+                <button class="nav-btn btn-next" id="nextBtn" onclick="nextQuestion()" disabled>Next</button>
+            </div>
+        </div>
+
+        <div class="completion-card" id="completionCard">
+            <div class="completion-icon">🎉</div>
+            <h2 class="completion-title">Thank You!</h2>
+            <p class="completion-message">Your feedback has been submitted successfully and will help us improve PGCC.</p>
+            <a href="/welcome" class="completion-btn">Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+        const totalQuestions = 3;
+        const answers = {};
+
+        function updateProgress() {
+            const progress = (currentQuestion / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `Question ${currentQuestion} of ${totalQuestions}`;
+        }
+
+        function showQuestion(questionNum) {
+            document.querySelectorAll('.question-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            setTimeout(() => {
+                document.querySelector(`[data-question="${questionNum}"]`).classList.add('active');
+            }, 100);
+
+            document.getElementById('prevBtn').style.display = questionNum === 1 ? 'none' : 'block';
+            document.getElementById('nextBtn').textContent = questionNum === totalQuestions ? 'Submit' : 'Next';
+            
+            updateProgress();
+            updateNextButton();
+        }
+
+        function updateNextButton() {
+            const hasAnswer = answers[currentQuestion];
+            document.getElementById('nextBtn').disabled = !hasAnswer;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                currentQuestion++;
+                showQuestion(currentQuestion);
+            } else {
+                submitSurvey();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 1) {
+                currentQuestion--;
+                showQuestion(currentQuestion);
+            }
+        }
+
+        async function submitSurvey() {
+            try {
+                const responses = Object.entries(answers).map(([questionId, answer]) => ({
+                    question_id: parseInt(questionId),
+                    answer: answer
+                }));
+
+                const response = await fetch('/api/responses', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ responses })
+                });
+
+                if (response.ok) {
+                    document.getElementById('surveyForm').style.display = 'none';
+                    document.getElementById('completionCard').style.display = 'block';
+                    document.getElementById('progressBar').style.width = '100%';
+                    document.getElementById('progressText').textContent = 'Complete!';
+                } else {
+                    alert('Error submitting survey. Please try again.');
+                }
+            } catch (error) {
+                alert('Connection error. Please try again.');
+            }
+        }
+
+        // Option selection handling
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.option-item')) {
+                const option = e.target.closest('.option-item');
+                const questionCard = option.closest('.question-card');
+                const questionNum = parseInt(questionCard.dataset.question);
+                
+                // Remove selection from other options in this question
+                questionCard.querySelectorAll('.option-item').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                // Select clicked option
+                option.classList.add('selected');
+                answers[questionNum] = option.dataset.value;
+                
+                updateNextButton();
+                
+                // Auto-advance after selection (with delay for visual feedback)
+                setTimeout(() => {
+                    if (currentQuestion < totalQuestions) {
+                        nextQuestion();
+                    }
+                }, 500);
+            }
+        });
+
+        // Initialize
+        showQuestion(1);
+
+        // Dynamic footer
+        function updateFooter() {
+            const now = new Date();
+            const footer = document.querySelector('.footer');
+            if (!footer) {
+                const footerEl = document.createElement('footer');
+                footerEl.className = 'footer';
+                footerEl.style.cssText = 'background: #333; color: white; text-align: center; padding: 2rem; margin-top: 2rem;';
+                footerEl.innerHTML = `<p>&copy; <span id="currentYear"></span> Faculty FeedBack Survey. Empowering voices worldwide.</p><p>Last updated: <span id="lastUpdated"></span> | Server time: <span id="serverTime"></span></p>`;
+                document.body.appendChild(footerEl);
+            }
+            document.getElementById('currentYear').textContent = now.getFullYear();
+            document.getElementById('lastUpdated').textContent = now.toLocaleDateString();
+            document.getElementById('serverTime').textContent = now.toLocaleTimeString();
+        }
+        
+        updateFooter();
+        setInterval(updateFooter, 1000);
+    </script>
+</body>
+</html>

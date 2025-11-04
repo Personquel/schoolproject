@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - SurveyPro</title>
+    <link rel="stylesheet" href="modern-style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #667eea;
+        }
+        
+        .menu {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .menu-item {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-item:hover, .menu-item.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .theme-toggle button {
+            background: none;
+            border: 2px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle button:hover {
+            background: #667eea;
+            transform: scale(1.1);
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards;
+        }
+        
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.2s forwards;
+        }
+        
+        .hero-description {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.4s forwards;
+        }
+        
+        .benefits-section {
+            padding: 5rem 2rem;
+            background: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            color: #333;
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        
+        .benefit-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .benefit-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .benefit-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .benefit-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+        }
+        
+        .benefit-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        
+        .benefit-description {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .mission-section {
+            padding: 5rem 2rem;
+            background: white;
+        }
+        
+        .mission-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        
+        .mission-text h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+        
+        .mission-text p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+        
+        .mission-list {
+            list-style: none;
+        }
+        
+        .mission-list li {
+            padding: 0.8rem 0;
+            padding-left: 2rem;
+            position: relative;
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .mission-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .mission-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .rating-section {
+            padding: 5rem 2rem;
+            background: #f8f9fa;
+            text-align: center;
+        }
+        
+        .rating-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .star-rating {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .star {
+            font-size: 2rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .star:hover, .star.active {
+            color: #ffc107;
+            transform: scale(1.2);
+        }
+        
+        .rating-text {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        
+        .feedback-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+        
+        .feedback-btn {
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            background: white;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .feedback-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .feedback-btn.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+            
+            .menu {
+                display: none;
+            }
+            
+            .mission-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .mission-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .feedback-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <span class="logo-icon">🧊</span>
+            <span class="logo-text">FFS</span>
+        </div>
+        <nav class="menu">
+            <a href="/welcome" class="menu-item">Home</a>
+            <a href="/survey01" class="menu-item">Survey</a>
+            <a href="/about" class="menu-item active">About</a>
+            <a href="/contact" class="menu-item">Contact</a>
+        </nav>
+        <div class="theme-toggle">
+            <button id="themeToggle" aria-label="Toggle theme">
+                <span class="sun-icon">☀️</span>
+            </button>
+        </div>
+    </header>
+
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">About Faculty Feedback Survey</h1>
+            <p class="hero-subtitle">Transforming feedback into actionable insights within communities</p>
+            <p class="hero-description">We're on a mission to bridge the gap between Teacher and Students, believing that every voice matters and every opinion can drive meaningful change.</p>
+        </div>
+    </section>
+
+    <section class="benefits-section">
+        <div class="container">
+            <h2 class="section-title">Why Choose FFS?</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">⚡</div>
+                    <h3 class="benefit-title">Lightning Fast</h3>
+                    <p class="benefit-description">Quick surveys that respect your time while gathering meaningful insights for better decision making.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">🔒</div>
+                    <h3 class="benefit-title">Secure & Private</h3>
+                    <p class="benefit-description">Your data is protected with enterprise-grade security measures and privacy protocols.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">📊</div>
+                    <h3 class="benefit-title">Real-time Analytics</h3>
+                    <p class="benefit-description">Instant insights and analytics to help you make data-driven decisions with confidence.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">🌍</div>
+                    <h3 class="benefit-title">Global Reach</h3>
+                    <p class="benefit-description">Connect with audiences worldwide through our multilingual platform and global infrastructure.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mission-section">
+        <div class="container">
+            <div class="mission-content">
+                <div class="mission-text">
+                    <h3>Your Voice, Our Mission</h3>
+                    <p>At FFS, we empower Teachers and Students to create positive change through meaningful feedback. Every survey response contributes to better products, services, and experiences for everyone.</p>
+                    <ul class="mission-list">
+                        <li>Drive communication through user feedback</li>
+                        <li>Improve Communities through love and guidiance</li>
+                        <li>Make depending decision which influence everyone</li>
+                        <li>Build stronger communities through engagement</li>
+                    </ul>
+                </div>
+                <div class="mission-stats">
+                    <div class="stat-card">
+                        <span class="stat-number">50K+</span>
+                        <span class="stat-label">Potential student and Techers</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">98%</span>
+                        <span class="stat-label">User Satisfaction</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">100+</span>
+                        <span class="stat-label">Prince Georges county</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">Support Available</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="rating-section">
+        <div class="container">
+            <h2 class="section-title">Rate Your Experience</h2>
+            <div class="rating-container">
+                <div class="star-rating">
+                    <span class="star" data-rating="1">★</span>
+                    <span class="star" data-rating="2">★</span>
+                    <span class="star" data-rating="3">★</span>
+                    <span class="star" data-rating="4">★</span>
+                    <span class="star" data-rating="5">★</span>
+                </div>
+                <p class="rating-text">Click the stars to rate us</p>
+                <div class="feedback-buttons">
+                    <button class="feedback-btn" data-feedback="excellent">Excellent</button>
+                    <button class="feedback-btn" data-feedback="good">Good</button>
+                    <button class="feedback-btn" data-feedback="average">Average</button>
+                    <button class="feedback-btn" data-feedback="poor">Needs Work</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; <span id="currentYear"></span> Falculty Feedback Survey . Empowering voices worldwide.</p>
+        <p>Last updated: <span id="lastUpdated"></span> | Server time: <span id="serverTime"></span></p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Intersection Observer for animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Observe elements for animation
+            document.querySelectorAll('.benefit-card, .stat-card').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'all 0.6s ease';
+                observer.observe(el);
+            });
+
+            // Star rating functionality
+            const stars = document.querySelectorAll('.star');
+            const ratingText = document.querySelector('.rating-text');
+            let currentRating = 0;
+
+            stars.forEach(star => {
+                star.addEventListener('click', () => {
+                    currentRating = parseInt(star.dataset.rating);
+                    updateStars();
+                    ratingText.textContent = `You rated us ${currentRating} star${currentRating > 1 ? 's' : ''}! Thank you for your feedback.`;
+                });
+
+                star.addEventListener('mouseover', () => {
+                    const hoverRating = parseInt(star.dataset.rating);
+                    highlightStars(hoverRating);
+                });
+            });
+
+            document.querySelector('.star-rating').addEventListener('mouseleave', () => {
+                updateStars();
+            });
+
+            function updateStars() {
+                stars.forEach((star, index) => {
+                    star.classList.toggle('active', index < currentRating);
+                });
+            }
+
+            function highlightStars(rating) {
+                stars.forEach((star, index) => {
+                    star.classList.toggle('active', index < rating);
+                });
+            }
+
+            // Feedback buttons
+            document.querySelectorAll('.feedback-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.feedback-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    ratingText.textContent = `Thank you for rating us as ${btn.dataset.feedback}!`;
+                });
+            });
+
+            // Counter animation for stats
+            const animateCounter = (element, target) => {
+                let current = 0;
+                const increment = target / 50;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    const suffix = element.textContent.replace(/\d+/g, '');
+                    element.textContent = Math.floor(current) + suffix;
+                }, 40);
+            };
+
+            // Animate stats when visible
+            const statsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const statNumber = entry.target.querySelector('.stat-number');
+                        const text = statNumber.textContent;
+                        const number = parseInt(text.replace(/[^\d]/g, ''));
+                        if (number) {
+                            statNumber.textContent = '0' + text.replace(/\d+/g, '');
+                            setTimeout(() => animateCounter(statNumber, number), 200);
+                        }
+                        statsObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            document.querySelectorAll('.stat-card').forEach(card => {
+                statsObserver.observe(card);
+            });
+
+            // Dynamic footer
+            function updateFooter() {
+                const now = new Date();
+                document.getElementById('currentYear').textContent = now.getFullYear();
+                document.getElementById('lastUpdated').textContent = now.toLocaleDateString();
+                document.getElementById('serverTime').textContent = now.toLocaleTimeString();
+            }
+            
+            updateFooter();
+            setInterval(updateFooter, 1000);
+        });
+    </script>
+</body>
+</html>

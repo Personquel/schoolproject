@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Survey - SurveyPro</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; color: #333; }
+        .header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
+        .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 1.5rem; color: #667eea; }
+        .survey-container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+        .survey-header { text-align: center; margin-bottom: 3rem; padding: 2rem; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .survey-title { font-size: 2.5rem; font-weight: 700; color: #333; margin-bottom: 1rem; }
+        .category-selector { margin-bottom: 2rem; text-align: center; }
+        .category-select { padding: 1rem; border: 2px solid #e9ecef; border-radius: 15px; font-size: 1rem; background: white; min-width: 250px; }
+        .progress-container { background: #e9ecef; border-radius: 50px; height: 8px; margin-bottom: 1rem; overflow: hidden; }
+        .progress-bar { background: linear-gradient(90deg, #667eea, #764ba2); height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 50px; }
+        .question-card { background: white; border-radius: 20px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: none; }
+        .question-card.active { display: block; }
+        .question-number { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; margin-bottom: 1.5rem; }
+        .question-text { font-size: 1.3rem; font-weight: 600; color: #333; margin-bottom: 2rem; line-height: 1.4; }
+        .options-container { display: grid; gap: 1rem; }
+        .option-item { background: #f8f9fa; border: 2px solid transparent; border-radius: 15px; padding: 1rem; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 1rem; }
+        .option-item:hover { border-color: #667eea; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2); }
+        .option-item.selected { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-color: #667eea; }
+        .option-letter { background: #667eea; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0; }
+        .option-item.selected .option-letter { background: white; color: #667eea; }
+        .navigation-buttons { display: flex; justify-content: space-between; margin-top: 2rem; }
+        .nav-btn { padding: 1rem 2rem; border: none; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 1rem; }
+        .btn-prev { background: #e9ecef; color: #666; }
+        .btn-next { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-next:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+        .completion-card { background: white; border-radius: 20px; padding: 3rem; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: none; }
+        .completion-icon { font-size: 4rem; margin-bottom: 1rem; }
+        .loading { text-align: center; padding: 2rem; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <span class="logo-icon">🧊</span>
+            <span class="logo-text">FFS</span>
+        </div>
+    </header>
+
+    <div class="survey-container">
+        <div class="survey-header">
+            <h1 class="survey-title">Teacher Effectiveness Survey</h1>
+            <p>Evaluate your teaching practices and professional development</p>
+            
+            <div class="category-selector">
+                <select class="category-select" id="categorySelect">
+                    <option value="">All Categories</option>
+                </select>
+                <button onclick="loadQuestions()" style="margin-left: 1rem; padding: 1rem 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 15px; cursor: pointer;">Start Survey</button>
+            </div>
+            
+            <div class="progress-container" id="progressContainer" style="display: none;">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div id="progressText" style="display: none;"></div>
+        </div>
+
+        <div id="loadingMessage" class="loading">
+            <p>Loading categories...</p>
+        </div>
+
+        <div id="questionsContainer"></div>
+
+        <div class="navigation-buttons" id="navigationButtons" style="display: none;">
+            <button class="nav-btn btn-prev" id="prevBtn" onclick="previousQuestion()">Previous</button>
+            <button class="nav-btn btn-next" id="nextBtn" onclick="nextQuestion()">Next</button>
+        </div>
+
+        <div class="completion-card" id="completionCard">
+            <div class="completion-icon">🎉</div>
+            <h2>Thank You!</h2>
+            <p>Your responses have been submitted successfully.</p>
+            <a href="/welcome" style="display: inline-block; margin-top: 2rem; padding: 1rem 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 25px;">Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        let questions = [];
+        let currentQuestion = 0;
+        let answers = {};
+
+        document.addEventListener('DOMContentLoaded', loadCategories);
+
+        async function loadCategories() {
+            try {
+                const response = await fetch('/api/teacher-categories');
+                const categories = await response.json();
+                
+                const select = document.getElementById('categorySelect');
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category;
+                    select.appendChild(option);
+                });
+                
+                document.getElementById('loadingMessage').style.display = 'none';
+            } catch (error) {
+                document.getElementById('loadingMessage').innerHTML = '<p>Error loading categories</p>';
+            }
+        }
+
+        async function loadQuestions() {
+            const category = document.getElementById('categorySelect').value;
+            
+            try {
+                const url = category ? `/api/teacher-questions?category=${encodeURIComponent(category)}` : '/api/teacher-questions';
+                const response = await fetch(url);
+                questions = await response.json();
+                
+                if (questions.length === 0) {
+                    alert('No questions found for this category');
+                    return;
+                }
+                
+                document.getElementById('progressContainer').style.display = 'block';
+                document.getElementById('progressText').style.display = 'block';
+                document.getElementById('navigationButtons').style.display = 'flex';
+                
+                renderQuestions();
+                showQuestion(0);
+            } catch (error) {
+                alert('Error loading questions');
+            }
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+            
+            questions.forEach((question, index) => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card';
+                questionCard.innerHTML = `
+                    <div class="question-number">${index + 1}</div>
+                    <h2 class="question-text">${question.question_text}</h2>
+                    <div class="options-container">
+                        <div class="option-item" data-value="A" onclick="selectOption(${index}, 'A')">
+                            <div class="option-letter">A</div>
+                            <span>${question.option_a}</span>
+                        </div>
+                        <div class="option-item" data-value="B" onclick="selectOption(${index}, 'B')">
+                            <div class="option-letter">B</div>
+                            <span>${question.option_b}</span>
+                        </div>
+                        <div class="option-item" data-value="C" onclick="selectOption(${index}, 'C')">
+                            <div class="option-letter">C</div>
+                            <span>${question.option_c}</span>
+                        </div>
+                        <div class="option-item" data-value="D" onclick="selectOption(${index}, 'D')">
+                            <div class="option-letter">D</div>
+                            <span>${question.option_d}</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(questionCard);
+            });
+        }
+
+        function selectOption(questionIndex, option) {
+            const questionCard = document.querySelectorAll('.question-card')[questionIndex];
+            questionCard.querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
+            questionCard.querySelector(`[data-value="${option}"]`).classList.add('selected');
+            
+            answers[questions[questionIndex].id] = option;
+            updateNextButton();
+            
+            // Auto-advance after selection
+            setTimeout(() => {
+                if (currentQuestion < questions.length - 1) {
+                    nextQuestion();
+                } else {
+                    submitSurvey();
+                }
+            }, 500);
+        }
+
+        function showQuestion(index) {
+            document.querySelectorAll('.question-card').forEach(card => card.classList.remove('active'));
+            document.querySelectorAll('.question-card')[index].classList.add('active');
+            
+            currentQuestion = index;
+            updateProgress();
+            updateNextButton();
+            
+            document.getElementById('prevBtn').style.display = index === 0 ? 'none' : 'block';
+            document.getElementById('nextBtn').textContent = index === questions.length - 1 ? 'Submit' : 'Next';
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+        }
+
+        function updateNextButton() {
+            const hasAnswer = answers[questions[currentQuestion].id];
+            document.getElementById('nextBtn').disabled = !hasAnswer;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                showQuestion(currentQuestion + 1);
+            } else {
+                submitSurvey();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                showQuestion(currentQuestion - 1);
+            }
+        }
+
+        async function submitSurvey() {
+            try {
+                const responses = Object.entries(answers).map(([questionId, selectedOption]) => ({
+                    question_id: parseInt(questionId),
+                    selected_option: selectedOption
+                }));
+
+                const response = await fetch('/api/teacher-responses', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ responses })
+                });
+
+                if (response.ok) {
+                    document.getElementById('questionsContainer').style.display = 'none';
+                    document.getElementById('navigationButtons').style.display = 'none';
+                    document.getElementById('completionCard').style.display = 'block';
+                    document.getElementById('progressBar').style.width = '100%';
+                    document.getElementById('progressText').textContent = 'Complete!';
+                } else {
+                    alert('Error submitting survey. Please try again.');
+                }
+            } catch (error) {
+                alert('Connection error. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>

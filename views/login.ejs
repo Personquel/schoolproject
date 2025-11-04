@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SurveyPro</title>
+    <link rel="stylesheet" href="modern-style.css">
+    <style>
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        .auth-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .auth-logo {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        .auth-title {
+            font-size: 2rem;
+            color: #333;
+            margin: 0;
+        }
+        .auth-subtitle {
+            color: #666;
+            margin: 5px 0 0 0;
+        }
+        .form-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            background: #f5f5f5;
+            padding: 4px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .tab-btn.active {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            color: #667eea;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .auth-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .auth-btn:hover {
+            transform: translateY(-2px);
+        }
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+        }
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .register-form {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">🧊</div>
+                <h1 class="auth-title">FFS</h1>
+                <p class="auth-subtitle">Welcome back</p>
+            </div>
+
+            <div class="form-tabs">
+                <button class="tab-btn active" onclick="switchTab('login')">Login</button>
+                <button class="tab-btn" onclick="switchTab('register')">Register</button>
+            </div>
+
+            <div id="message"></div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <input type="text" class="form-input" placeholder="Username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-input" placeholder="Password" name="password" required>
+                </div>
+                <button type="submit" class="auth-btn">Sign In</button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="register-form">
+                <div class="form-group">
+                    <input type="text" class="form-input" placeholder="Username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-input" placeholder="Password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-input" placeholder="Confirm Password" name="confirmPassword" required>
+                </div>
+                <button type="submit" class="auth-btn">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tab) {
+            const loginForm = document.querySelector('.login-form');
+            const registerForm = document.querySelector('.register-form');
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const subtitle = document.querySelector('.auth-subtitle');
+            
+            tabBtns.forEach(btn => btn.classList.remove('active'));
+            
+            if (tab === 'login') {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+                tabBtns[0].classList.add('active');
+                subtitle.textContent = 'Welcome back';
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+                tabBtns[1].classList.add('active');
+                subtitle.textContent = 'Create your account';
+            }
+            
+            clearMessage();
+        }
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `<div class="message ${type}">${text}</div>`;
+        }
+
+        function clearMessage() {
+            document.getElementById('message').innerHTML = '';
+        }
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: formData.get('username'),
+                        password: formData.get('password')
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('Login successful! Redirecting...', 'success');
+                    setTimeout(() => window.location.href = '/welcome', 1500);
+                } else {
+                    showMessage(data.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Connection error. Please try again.', 'error');
+            }
+        });
+
+        // Register form handler
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const password = formData.get('password');
+            const confirmPassword = formData.get('confirmPassword');
+            
+            if (password !== confirmPassword) {
+                showMessage('Passwords do not match!', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: formData.get('username'),
+                        password: password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('Account created successfully! You can now login.', 'success');
+                    setTimeout(() => switchTab('login'), 2000);
+                } else {
+                    showMessage(data.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Connection error. Please try again.', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

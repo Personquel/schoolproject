@@ -3,6 +3,8 @@ const { Pool } = require('pg');
 const bodyParser = require('body-parser');
 const path = require('path');
 const bcrypt = require('bcrypt');
+const session = require('express-session');
+const multer = require('multer');
 require('dotenv').config();
 
 const app = express();
@@ -14,15 +16,40 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Middleware
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
+app.use('/uploads', express.static('uploads'));
+
+// Multer configuration
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+const upload = multer({ storage, fileFilter: (req, file, cb) => {
+  if (file.mimetype.startsWith('image/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only image files allowed'));
+  }
+}});
+app.use(session({
+  secret: 'survey-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }
+}));
 
 // PostgreSQL connection
 const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 5432,
-  database: process.env.DB_NAME || 'survey_db',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'password',
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
 });
 
 // Initialize database tables
@@ -34,6 +61,7 @@ async function initDatabase() {
         id SERIAL PRIMARY KEY,
         username VARCHAR(255) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL,
+        profile_picture VARCHAR(255),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
@@ -51,12 +79,23 @@ async function initDatabase() {
       )
     `);
 
-    // Student responses table
+    // Student responses table (legacy - individual responses)
     await pool.query(`
       CREATE TABLE IF NOT EXISTS student_responses (
         id SERIAL PRIMARY KEY,
         question_id INTEGER REFERENCES student_questions(id),
         selected_option CHAR(1) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Drop and recreate student_survey_responses table with correct structure
+    await pool.query('DROP TABLE IF EXISTS student_survey_responses');
+    await pool.query(`
+      CREATE TABLE student_survey_responses (
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(255) NOT NULL,
+        answers TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
@@ -74,12 +113,11 @@ async function initDatabase() {
       )
     `);
 
-    // Teacher responses table
+    // Teacher survey responses table (username as primary key, answers in single column)
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS teacher_responses (
-        id SERIAL PRIMARY KEY,
-        question_id INTEGER REFERENCES teacher_questions(id),
-        selected_option CHAR(1) NOT NULL,
+      CREATE TABLE IF NOT EXISTS teacher_survey_responses (
+        username VARCHAR(255) PRIMARY KEY,
+        answers TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
@@ -97,25 +135,59 @@ async function initDatabase() {
       )
     `);
 
-    // Extra activities responses table
+    // Extra activities survey responses table (username as primary key, answers in single column)
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS extra_responses (
-        id SERIAL PRIMARY KEY,
-        question_id INTEGER REFERENCES extra_questions(id),
-        selected_option CHAR(1) NOT NULL,
+      CREATE TABLE IF NOT EXISTS extra_survey_responses (
+        username VARCHAR(255) PRIMARY KEY,
+        answers TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
-    // General survey responses table
+    // Website survey responses table (username as primary key, answers in single column)
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS general_responses (
-        id SERIAL PRIMARY KEY,
-        question_id INTEGER NOT NULL,
-        answer VARCHAR(255) NOT NULL,
+      CREATE TABLE IF NOT EXISTS website_survey_responses (
+        username VARCHAR(255) PRIMARY KEY,
+        answers TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // User survey responses table (username as primary key, answers in single column)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS user_survey_responses (
+        username VARCHAR(255) PRIMARY KEY,
+        answers TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+
+
+    // Avatars table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS avatars (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        url VARCHAR(255) NOT NULL
+      )
+    `);
+
+    // Insert default avatars
+    const avatarCount = await pool.query('SELECT COUNT(*) FROM avatars');
+    if (parseInt(avatarCount.rows[0].count) === 0) {
+      const avatars = [
+        { name: 'Student', url: 'https://via.placeholder.com/100x100/667eea/ffffff?text=👨‍🎓' },
+        { name: 'Teacher', url: 'https://via.placeholder.com/100x100/e74c3c/ffffff?text=👩‍🏫' },
+        { name: 'Scientist', url: 'https://via.placeholder.com/100x100/2ecc71/ffffff?text=👨‍🔬' },
+        { name: 'Artist', url: 'https://via.placeholder.com/100x100/f39c12/ffffff?text=👩‍🎨' },
+        { name: 'Engineer', url: 'https://via.placeholder.com/100x100/9b59b6/ffffff?text=👨‍💻' },
+        { name: 'Doctor', url: 'https://via.placeholder.com/100x100/1abc9c/ffffff?text=👩‍⚕️' }
+      ];
+      for (const avatar of avatars) {
+        await pool.query('INSERT INTO avatars (name, url) VALUES ($1, $2)', [avatar.name, avatar.url]);
+      }
+    }
 
     // Insert sample users
     const userCount = await pool.query('SELECT COUNT(*) FROM users');
@@ -192,49 +264,63 @@ async function initDatabase() {
   }
 }
 
+// Create uploads directory
+const fs = require('fs');
+if (!fs.existsSync('uploads')) {
+  fs.mkdirSync('uploads');
+}
+
 // Initialize database on startup
 initDatabase();
+
+// Authentication middleware
+function requireAuth(req, res, next) {
+  if (req.session.user) {
+    next();
+  } else {
+    res.redirect('/');
+  }
+}
 
 // Routes
 app.get('/', (req, res) => {
   res.render('login');
 });
 
-app.get('/welcome', (req, res) => {
-  res.render('welcome');
+app.get('/welcome', requireAuth, (req, res) => {
+  res.render('welcome', { user: req.session.user || null });
 });
 
-
-app.get('/survey01', (req, res) => {
-  res.render('survey01');
+app.get('/website-survey', requireAuth, (req, res) => {
+  res.render('website-survey');
 });
 
-app.get('/summary', (req, res) => {
+app.get('/summary', requireAuth, (req, res) => {
   res.render('summary');
 });
 
-app.get('/about', (req, res) => {
+app.get('/about', requireAuth, (req, res) => {
   res.render('about');
 });
 
-app.get('/contact', (req, res) => {
+app.get('/contact', requireAuth, (req, res) => {
   res.render('contact');
 });
 
-app.get('/index', (req, res) => {
+app.get('/index', requireAuth, (req, res) => {
   res.render('index');
 });
 
-app.get('/student-survey', (req, res) => {
-  res.render('student-survey');
+app.get('/student-survey', requireAuth, (req, res) => {
+  res.render('student-survey', { user: req.session.user });
 });
 
-app.get('/teacher-survey', (req, res) => {
-  res.render('teacher-survey');
+app.get('/teacher-survey', requireAuth, (req, res) => {
+  res.render('teacher-survey', { user: req.session.user });
 });
 
-app.get('/extra-survey', (req, res) => {
-  res.render('extra-survey');
+app.get('/extra-survey', requireAuth, (req, res) => {
+  res.render('extra-survey', { user: req.session.user });
 });
 
 app.get('/api/test-db', async (req, res) => {
@@ -248,18 +334,13 @@ app.get('/api/test-db', async (req, res) => {
 
 app.get('/api/student-questions', async (req, res) => {
   try {
-    const category = req.query.category;
-    let query = 'SELECT * FROM student_questions';
-    let params = [];
-    
-    if (category) {
-      query += ' WHERE category = $1';
-      params.push(category);
+    const categories = await pool.query('SELECT DISTINCT category FROM student_questions');
+    const allQuestions = [];
+    for (const cat of categories.rows) {
+      const questions = await pool.query('SELECT * FROM student_questions WHERE category = $1 ORDER BY RANDOM() LIMIT 3', [cat.category]);
+      allQuestions.push(...questions.rows);
     }
-    
-    query += ' ORDER BY RANDOM() LIMIT 10';
-    const result = await pool.query(query, params);
-    res.json(result.rows);
+    res.json(allQuestions.sort(() => Math.random() - 0.5).slice(0, 10));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -276,18 +357,13 @@ app.get('/api/categories', async (req, res) => {
 
 app.get('/api/teacher-questions', async (req, res) => {
   try {
-    const category = req.query.category;
-    let query = 'SELECT * FROM teacher_questions';
-    let params = [];
-    
-    if (category) {
-      query += ' WHERE category = $1';
-      params.push(category);
+    const categories = await pool.query('SELECT DISTINCT category FROM teacher_questions');
+    const allQuestions = [];
+    for (const cat of categories.rows) {
+      const questions = await pool.query('SELECT * FROM teacher_questions WHERE category = $1 ORDER BY RANDOM() LIMIT 3', [cat.category]);
+      allQuestions.push(...questions.rows);
     }
-    
-    query += ' ORDER BY RANDOM() LIMIT 10';
-    const result = await pool.query(query, params);
-    res.json(result.rows);
+    res.json(allQuestions.sort(() => Math.random() - 0.5).slice(0, 10));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -302,50 +378,17 @@ app.get('/api/teacher-categories', async (req, res) => {
   }
 });
 
-app.post('/api/student-responses', async (req, res) => {
-  try {
-    const { responses } = req.body;
-    for (const response of responses) {
-      await pool.query(
-        'INSERT INTO student_responses (question_id, selected_option) VALUES ($1, $2)',
-        [response.question_id, response.selected_option]
-      );
-    }
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
 
-app.post('/api/teacher-responses', async (req, res) => {
-  try {
-    const { responses } = req.body;
-    for (const response of responses) {
-      await pool.query(
-        'INSERT INTO teacher_responses (question_id, selected_option) VALUES ($1, $2)',
-        [response.question_id, response.selected_option]
-      );
-    }
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
 
 app.get('/api/extra-questions', async (req, res) => {
   try {
-    const category = req.query.category;
-    let query = 'SELECT * FROM extra_questions';
-    let params = [];
-    
-    if (category) {
-      query += ' WHERE category = $1';
-      params.push(category);
+    const categories = await pool.query('SELECT DISTINCT category FROM extra_questions');
+    const allQuestions = [];
+    for (const cat of categories.rows) {
+      const questions = await pool.query('SELECT * FROM extra_questions WHERE category = $1 ORDER BY RANDOM() LIMIT 3', [cat.category]);
+      allQuestions.push(...questions.rows);
     }
-    
-    query += ' ORDER BY RANDOM() LIMIT 10';
-    const result = await pool.query(query, params);
-    res.json(result.rows);
+    res.json(allQuestions.sort(() => Math.random() - 0.5).slice(0, 10));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -375,7 +418,8 @@ app.post('/api/login', async (req, res) => {
       const isValidPassword = await bcrypt.compare(password, user.password);
       
       if (isValidPassword) {
-        res.json({ message: 'Login successful', user: { id: user.id, username: user.username } });
+        req.session.user = { id: user.id, username: user.username, profile_picture: user.profile_picture };
+        res.json({ message: 'Login successful', user: { id: user.id, username: user.username, profile_picture: user.profile_picture } });
       } else {
         res.status(401).json({ error: 'Invalid username or password' });
       }
@@ -420,68 +464,156 @@ app.post('/api/register', async (req, res) => {
 });
 
 app.post('/api/student-responses', async (req, res) => {
-  const { responses } = req.body;
+  const { username, answers } = req.body;
   
-  if (!responses || !Array.isArray(responses)) {
-    return res.status(400).json({ error: 'Invalid responses format' });
+  if (!username || !answers || answers.length !== 10) {
+    return res.status(400).json({ error: 'Must provide username and exactly 10 answers' });
   }
 
   try {
-    for (const response of responses) {
-      await pool.query('INSERT INTO student_responses (question_id, selected_option) VALUES ($1, $2)', [response.question_id, response.selected_option]);
-    }
+    await pool.query(
+      'INSERT INTO student_survey_responses (username, answers) VALUES ($1, $2)',
+      [username, JSON.stringify(answers)]
+    );
     res.json({ message: 'Student responses saved successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-app.post('/api/teacher-responses', async (req, res) => {
-  const { responses } = req.body;
+app.post('/api/teacher-survey-responses', async (req, res) => {
+  const { username, answers } = req.body;
   
-  if (!responses || !Array.isArray(responses)) {
-    return res.status(400).json({ error: 'Invalid responses format' });
+  if (!username || !answers || answers.length !== 10) {
+    return res.status(400).json({ error: 'Must provide username and exactly 10 answers' });
   }
 
   try {
-    for (const response of responses) {
-      await pool.query('INSERT INTO teacher_responses (question_id, selected_option) VALUES ($1, $2)', [response.question_id, response.selected_option]);
-    }
-    res.json({ message: 'Teacher responses saved successfully' });
+    await pool.query(
+      'INSERT INTO teacher_survey_responses (username, answers) VALUES ($1, $2) ON CONFLICT (username) DO UPDATE SET answers = $2, created_at = CURRENT_TIMESTAMP',
+      [username, JSON.stringify(answers)]
+    );
+    res.json({ message: 'Teacher survey responses saved successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-app.post('/api/extra-responses', async (req, res) => {
-  const { responses } = req.body;
+app.post('/api/extra-survey-responses', async (req, res) => {
+  const { username, answers } = req.body;
   
-  if (!responses || !Array.isArray(responses)) {
-    return res.status(400).json({ error: 'Invalid responses format' });
+  if (!username || !answers || answers.length !== 10) {
+    return res.status(400).json({ error: 'Must provide username and exactly 10 answers' });
   }
 
   try {
-    for (const response of responses) {
-      await pool.query('INSERT INTO extra_responses (question_id, selected_option) VALUES ($1, $2)', [response.question_id, response.selected_option]);
-    }
-    res.json({ message: 'Extra activities responses saved successfully' });
+    await pool.query(
+      'INSERT INTO extra_survey_responses (username, answers) VALUES ($1, $2) ON CONFLICT (username) DO UPDATE SET answers = $2, created_at = CURRENT_TIMESTAMP',
+      [username, JSON.stringify(answers)]
+    );
+    res.json({ message: 'Extra activities survey responses saved successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-app.post('/api/responses', async (req, res) => {
-  const { responses } = req.body;
+app.post('/api/website-survey-responses', async (req, res) => {
+  const { username, answers } = req.body;
   
-  if (!responses || !Array.isArray(responses)) {
-    return res.status(400).json({ error: 'Invalid responses format' });
+  if (!username || !answers || answers.length !== 10) {
+    return res.status(400).json({ error: 'Must provide username and exactly 10 answers' });
   }
 
   try {
-    for (const response of responses) {
-      await pool.query('INSERT INTO general_responses (question_id, answer) VALUES ($1, $2)', [response.question_id, response.answer]);
+    await pool.query(
+      'INSERT INTO website_survey_responses (username, answers) VALUES ($1, $2) ON CONFLICT (username) DO UPDATE SET answers = $2, created_at = CURRENT_TIMESTAMP',
+      [username, JSON.stringify(answers)]
+    );
+    res.json({ message: 'Website survey responses saved successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/user-survey-questions', async (req, res) => {
+  try {
+    const categories = await pool.query('SELECT DISTINCT category FROM student_questions');
+    const allQuestions = [];
+    for (const cat of categories.rows) {
+      const questions = await pool.query('SELECT * FROM student_questions WHERE category = $1 ORDER BY RANDOM() LIMIT 3', [cat.category]);
+      allQuestions.push(...questions.rows);
     }
-    res.json({ message: 'Survey responses saved successfully' });
+    res.json(allQuestions.sort(() => Math.random() - 0.5).slice(0, 10));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/user-survey-responses', async (req, res) => {
+  const { username, answers } = req.body;
+  
+  if (!username || !answers || answers.length !== 10) {
+    return res.status(400).json({ error: 'Must provide username and exactly 10 answers' });
+  }
+
+  try {
+    await pool.query(
+      'INSERT INTO user_survey_responses (username, answers) VALUES ($1, $2) ON CONFLICT (username) DO UPDATE SET answers = $2, created_at = CURRENT_TIMESTAMP',
+      [username, JSON.stringify(answers)]
+    );
+    res.json({ message: 'User survey responses saved successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/user-survey-page', requireAuth, (req, res) => {
+  res.render('user-survey-page', { user: req.session.user || null });
+});
+
+app.get('/start-journey', requireAuth, (req, res) => {
+  res.redirect('/user-survey-page');
+});
+
+app.post('/api/logout', (req, res) => {
+  req.session.destroy();
+  res.json({ message: 'Logged out successfully' });
+});
+
+app.get('/api/avatars', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM avatars');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/upload-profile-picture', upload.single('profilePicture'), async (req, res) => {
+  if (!req.session.user) {
+    return res.status(401).json({ error: 'Not logged in' });
+  }
+  
+  try {
+    const filename = req.file.filename;
+    await pool.query('UPDATE users SET profile_picture = $1 WHERE id = $2', [filename, req.session.user.id]);
+    req.session.user.profile_picture = filename;
+    res.json({ message: 'Profile picture updated', filename });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/set-avatar', async (req, res) => {
+  if (!req.session.user) {
+    return res.status(401).json({ error: 'Not logged in' });
+  }
+  
+  try {
+    const { avatarUrl } = req.body;
+    await pool.query('UPDATE users SET profile_picture = $1 WHERE id = $2', [avatarUrl, req.session.user.id]);
+    req.session.user.profile_picture = avatarUrl;
+    res.json({ message: 'Avatar updated', avatarUrl });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

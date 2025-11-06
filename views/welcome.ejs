@@ -91,10 +91,108 @@
             transition: all 0.3s ease;
         }
         
-        .theme-toggle button:hover {
-            background: #667eea;
-            transform: scale(1.1);
+        .user-menu {
+            position: relative;
         }
+        
+        .user-avatar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .user-avatar:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .user-avatar img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #667eea;
+        }
+        
+        .username {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .dropdown-arrow {
+            font-size: 0.8rem;
+            color: #666;
+            transition: transform 0.3s ease;
+        }
+        
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+        
+        .user-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .dropdown-item span:first-child {
+            font-size: 1.2rem;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .login-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+
+        
+
         
         .hero-content {
             max-width: 1200px;
@@ -344,18 +442,31 @@
             <a href="/about" class="menu-item">About</a>
             <a href="/contact" class="menu-item">Contact</a>
         </nav>
-        <div class="theme-toggle">
-            <button id="themeToggle" aria-label="Toggle theme">
-                <span class="sun-icon">☀️</span>
-            </button>
+        <% if (user) { %>
+        <div class="user-menu">
+            <div class="user-avatar" onclick="toggleUserDropdown()">
+                <img src="<%= user.profile_picture ? '/uploads/' + user.profile_picture : 'https://via.placeholder.com/40x40/667eea/ffffff?text=' + user.username.charAt(0).toUpperCase() %>" alt="User" id="userAvatar">
+                <span class="username"><%= user.username %></span>
+                <span class="dropdown-arrow">▼</span>
+            </div>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="dropdown-item" onclick="logout()">
+                    <span>🚪</span> Logout
+                </div>
+            </div>
         </div>
+        <% } else { %>
+        <div class="auth-buttons">
+            <a href="/" class="login-btn">Login</a>
+        </div>
+        <% } %>
     </header>
 
     <section class="hero-section">
         <div class="hero-content">
             <h1 class="hero-title">Transform Feedback Into Action</h1>
             <p class="hero-subtitle">Join thousands of users sharing insights on how falculty could improve</p>
-            <a href="#surveys" class="cta-button">Start Your Journey</a>
+            <a href="/user-survey-page" class="cta-button">Start Your Journey</a>
         </div>
     </section>
 
@@ -376,10 +487,46 @@
                     <a href="/student-survey" class="survey-btn">Student Suggestion</a>
                 </div>
                 <div class="survey-card">
-                    <span class="card-icon">🎯</span>
+                    <span class="card-icon">👥</span>
                     <h3 class="card-title">Environment Survey</h3>
                     <p class="card-description">Which do want want to change or improve within the school</p>
                     <a href="/extra-survey" class="survey-btn">Extra activity</a>
+                </div>
+                <div class="survey-card">
+                    <span class="card-icon">✍️</span>
+                    <h3 class="card-title">Student Learning Survey</h3>
+                    <p class="card-description">Type your answers to 11 questions about your study habits</p>
+                    <a href="/student-survey-page" class="survey-btn">Type Answers</a>
+                </div>
+                <div class="survey-card">
+                    <span class="card-icon">⚽</span>
+                    <h3 class="card-title">sport Survey</h3>
+                    <p class="card-description">Answer anomousely to what you think a teachers should improve</p>
+                    <a href="/teacher-survey" class="survey-btn">Teacher suggestion</a>
+                </div>
+                <div class="survey-card">
+                    <span class="card-icon">🍿</span>
+                    <h3 class="card-title">Movies Survey</h3>
+                    <p class="card-description">Answer anomousely to what you think a teachers should improve</p>
+                    <a href="/teacher-survey" class="survey-btn">Teacher suggestion</a>
+                </div>
+                <div class="survey-card">
+                    <span class="card-icon">📶</span>
+                    <h3 class="card-title">Team Survey</h3>
+                    <p class="card-description">Answer anomousely to what you think a teachers should improve</p>
+                    <a href="/teacher-survey" class="survey-btn">Teacher suggestion</a>
+                </div>
+                <div class="survey-card">
+                    <span class="card-icon">📶</span>
+                    <h3 class="card-title">Programming Survey</h3>
+                    <p class="card-description">Answer anomousely to what you think a teachers should improve</p>
+                    <a href="/teacher-survey" class="survey-btn">Teacher suggestion</a>
+                </div>
+                <div class="survey-card">
+                    <span class="card-icon">📶</span>
+                    <h3 class="card-title">Food Survey</h3>
+                    <p class="card-description">Answer anomousely to what you think a teachers should improve</p>
+                    <a href="/teacher-survey" class="survey-btn">Teacher suggestion</a>
                 </div>
             </div>
         </div>
@@ -536,6 +683,33 @@
             updateFooter();
             setInterval(updateFooter, 1000);
         });
+        
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+        
+
+        
+        async function logout() {
+            try {
+                await fetch('/api/logout', { method: 'POST' });
+                window.location.href = '/';
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        }
+        
+
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.user-menu')) {
+                document.getElementById('userDropdown')?.classList.remove('show');
+            }
+        });
     </script>
+
+
 </body>
 </html>

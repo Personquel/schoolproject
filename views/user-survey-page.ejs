@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Survey - Type Your Answers</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; color: #333; }
+        .header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
+        .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 1.5rem; color: #667eea; cursor: pointer; text-decoration: none; }
+        .survey-container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+        .survey-header { text-align: center; margin-bottom: 3rem; padding: 2rem; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .survey-title { font-size: 2.5rem; font-weight: 700; color: #333; margin-bottom: 1rem; }
+        .progress-container { background: #e9ecef; border-radius: 50px; height: 8px; margin-bottom: 1rem; overflow: hidden; }
+        .progress-bar { background: linear-gradient(90deg, #667eea, #764ba2); height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 50px; }
+        .question-card { background: white; border-radius: 20px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .question-number { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; margin-bottom: 1.5rem; }
+        .question-text { font-size: 1.3rem; font-weight: 600; color: #333; margin-bottom: 2rem; line-height: 1.4; }
+        .answer-input { width: 100%; padding: 1rem; border: 2px solid #e9ecef; border-radius: 15px; font-size: 1rem; background: white; resize: vertical; min-height: 100px; }
+        .answer-input:focus { border-color: #667eea; outline: none; }
+        .submit-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem 2rem; border: none; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 1rem; width: 100%; margin-top: 2rem; }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .completion-card { background: white; border-radius: 20px; padding: 3rem; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: none; }
+        .completion-icon { font-size: 4rem; margin-bottom: 1rem; }
+        .loading { text-align: center; padding: 2rem; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="/welcome" class="logo">
+            <span class="logo-icon">🧊</span>
+            <span class="logo-text">FFS</span>
+        </a>
+    </header>
+
+    <div class="survey-container">
+        <div class="survey-header">
+            <h1 class="survey-title">User Survey</h1>
+            <p>Please answer all 10 questions below</p>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div id="progressText">Loading questions...</div>
+        </div>
+
+        <div id="loadingMessage" class="loading">
+            <p>Loading questions...</p>
+        </div>
+
+        <div id="questionsContainer"></div>
+
+        <button class="submit-btn" id="submitBtn" onclick="submitSurvey()" style="display: none;">Submit All Answers</button>
+
+        <div class="completion-card" id="completionCard">
+            <div class="completion-icon">🎉</div>
+            <h2>Thank You!</h2>
+            <p>Your responses have been submitted successfully.</p>
+            <a href="/welcome" style="display: inline-block; margin-top: 2rem; padding: 1rem 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 25px;">Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        let questions = [];
+        let answers = [];
+
+        document.addEventListener('DOMContentLoaded', loadQuestions);
+
+        async function loadQuestions() {
+            try {
+                const response = await fetch('/api/user-survey-questions');
+                questions = await response.json();
+                
+                if (questions.length === 0) {
+                    document.getElementById('loadingMessage').innerHTML = '<p>No questions found</p>';
+                    return;
+                }
+
+                answers = new Array(questions.length).fill('');
+                renderQuestions();
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('submitBtn').style.display = 'block';
+                updateProgress();
+            } catch (error) {
+                document.getElementById('loadingMessage').innerHTML = '<p>Error loading questions</p>';
+            }
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+            
+            questions.forEach((question, index) => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card';
+                questionCard.innerHTML = `
+                    <div class="question-number">${index + 1}</div>
+                    <h2 class="question-text">${question.question_text}</h2>
+                    <textarea 
+                        class="answer-input" 
+                        placeholder="Type your answer here..." 
+                        onchange="updateAnswer(${index}, this.value)"
+                        oninput="updateProgress()"
+                    ></textarea>
+                `;
+                container.appendChild(questionCard);
+            });
+        }
+
+        function updateAnswer(index, value) {
+            answers[index] = value;
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const filledAnswers = answers.filter(answer => answer.trim() !== '').length;
+            const progress = (filledAnswers / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `${filledAnswers} of ${questions.length} questions answered`;
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = filledAnswers < questions.length;
+        }
+
+        async function submitSurvey() {
+            if (answers.some(answer => answer.trim() === '')) {
+                alert('Please answer all questions before submitting.');
+                return;
+            }
+
+            try {
+                const username = '<%= user ? user.username : "anonymous" %>';
+                const response = await fetch('/api/user-survey-responses', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, answers })
+                });
+
+                if (response.ok) {
+                    document.getElementById('questionsContainer').style.display = 'none';
+                    document.getElementById('submitBtn').style.display = 'none';
+                    document.getElementById('completionCard').style.display = 'block';
+                    document.getElementById('progressBar').style.width = '100%';
+                    document.getElementById('progressText').textContent = 'Complete!';
+                } else {
+                    alert('Error submitting survey. Please try again.');
+                }
+            } catch (error) {
+                alert('Connection error. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>

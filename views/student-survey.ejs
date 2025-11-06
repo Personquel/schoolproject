@@ -35,6 +35,8 @@
             font-weight: 700;
             font-size: 1.5rem;
             color: #667eea;
+            cursor: pointer;
+            text-decoration: none;
         }
         
         .survey-container {
@@ -226,10 +228,10 @@
 </head>
 <body>
     <header class="header">
-        <div class="logo">
+        <a href="/welcome" class="logo">
             <span class="logo-icon">🧊</span>
             <span class="logo-text">FFS</span>
-        </div>
+        </a>
     </header>
 
     <div class="survey-container">
@@ -302,12 +304,26 @@
             try {
                 const url = category ? `/api/student-questions?category=${encodeURIComponent(category)}` : '/api/student-questions';
                 const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
                 questions = await response.json();
                 
                 if (questions.length === 0) {
                     alert('No questions found for this category');
                     return;
                 }
+                
+                // Ensure we have exactly 10 questions
+                if (questions.length !== 10) {
+                    console.warn(`Expected 10 questions, got ${questions.length}`);
+                }
+                
+                // Reset answers object
+                answers = {};
+                currentQuestion = 0;
                 
                 document.getElementById('progressContainer').style.display = 'block';
                 document.getElementById('progressText').style.display = 'block';
@@ -316,7 +332,8 @@
                 renderQuestions();
                 showQuestion(0);
             } catch (error) {
-                alert('Error loading questions');
+                console.error('Error loading questions:', error);
+                alert(`Error loading questions: ${error.message}`);
             }
         }
 
@@ -360,6 +377,13 @@
             
             answers[questions[questionIndex].id] = option;
             updateNextButton();
+            
+            // Auto-advance after selection (but not on last question)
+            if (currentQuestion < questions.length - 1) {
+                setTimeout(() => {
+                    nextQuestion();
+                }, 500);
+            }
         }
 
         function showQuestion(index) {
@@ -382,7 +406,15 @@
 
         function updateNextButton() {
             const hasAnswer = answers[questions[currentQuestion].id];
-            document.getElementById('nextBtn').disabled = !hasAnswer;
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.disabled = !hasAnswer;
+            
+            // Update button text and style based on completion
+            if (currentQuestion === questions.length - 1) {
+                const allAnswered = questions.every(q => answers[q.id]);
+                nextBtn.textContent = allAnswered ? 'Submit Survey' : 'Answer Required';
+                nextBtn.disabled = !allAnswered;
+            }
         }
 
         function nextQuestion() {
@@ -401,15 +433,20 @@
 
         async function submitSurvey() {
             try {
-                const responses = Object.entries(answers).map(([questionId, selectedOption]) => ({
-                    question_id: parseInt(questionId),
-                    selected_option: selectedOption
-                }));
+                // Ensure we have exactly 10 answers
+                const answersArray = questions.map(q => answers[q.id] || 'A');
+                const username = '<%= user ? user.username : "anonymous" %>';
+
+                // Validate we have the required number of answers
+                if (answersArray.length !== 10) {
+                    alert(`Please answer all questions. You have answered ${Object.keys(answers).length} out of ${questions.length} questions.`);
+                    return;
+                }
 
                 const response = await fetch('/api/student-responses', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ responses })
+                    body: JSON.stringify({ username, answers: answersArray })
                 });
 
                 if (response.ok) {
@@ -419,10 +456,12 @@
                     document.getElementById('progressBar').style.width = '100%';
                     document.getElementById('progressText').textContent = 'Complete!';
                 } else {
-                    alert('Error submitting survey. Please try again.');
+                    const errorData = await response.json();
+                    alert(`Error submitting survey: ${errorData.error || 'Please try again.'}`);
                 }
             } catch (error) {
-                alert('Connection error. Please try again.');
+                console.error('Survey submission error:', error);
+                alert('Connection error. Please check your internet connection and try again.');
             }
         }
     </script>

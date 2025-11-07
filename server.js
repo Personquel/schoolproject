@@ -272,6 +272,14 @@ async function initDatabase() {
       )
     `);
 
+    // User questions table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS user_questions (
+        id SERIAL PRIMARY KEY,
+        question_text TEXT NOT NULL
+      )
+    `);
+
 
 
     // Avatars table
@@ -457,6 +465,26 @@ async function initDatabase() {
             await pool.query(
               'INSERT INTO team_questions (question_text, option_a, option_b, option_c, option_d, category) VALUES ($1, $2, $3, $4, $5, $6)',
               [question, optionA, optionB, optionC, optionD, category]
+            );
+          }
+        }
+      }
+    }
+
+    // Load user questions from CSV data
+    const userCount = await pool.query('SELECT COUNT(*) FROM user_questions');
+    if (parseInt(userCount.rows[0].count) === 0) {
+      const csvPath = path.join(__dirname, 'user.csv');
+      if (fs.existsSync(csvPath)) {
+        const csvData = fs.readFileSync(csvPath, 'utf8');
+        const lines = csvData.split('\n').slice(1);
+        for (const line of lines) {
+          if (line.trim()) {
+            const parts = line.split(',');
+            const question = parts.slice(1).join(',').trim().replace(/\r$/, '');
+            await pool.query(
+              'INSERT INTO user_questions (question_text) VALUES ($1)',
+              [question]
             );
           }
         }
@@ -971,13 +999,8 @@ app.post('/api/website-survey-responses', async (req, res) => {
 
 app.get('/api/user-survey-questions', async (req, res) => {
   try {
-    const categories = await pool.query('SELECT DISTINCT category FROM student_questions');
-    const allQuestions = [];
-    for (const cat of categories.rows) {
-      const questions = await pool.query('SELECT * FROM student_questions WHERE category = $1 ORDER BY RANDOM() LIMIT 3', [cat.category]);
-      allQuestions.push(...questions.rows);
-    }
-    res.json(allQuestions.sort(() => Math.random() - 0.5).slice(0, 10));
+    const result = await pool.query('SELECT * FROM user_questions ORDER BY id');
+    res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

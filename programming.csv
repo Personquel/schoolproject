@@ -1,0 +1,161 @@
+Question,Option A,Option B,Option C,Option D,Category
+I spend significant time debating the choice between monolithic and microservice architecture before starting a new project.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I believe starting with a detailed **database schema** is the most crucial first step for any application.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I design my systems to handle 10x the expected user load from day one (over-engineering is preparation).,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I choose a technology stack based on long-term maintainability rather than short-term development speed.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+"I prefer building my own component from scratch rather than adopting a large, opinionated framework.",Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I use **UML diagrams** or similar visual tools to map out class and component relationships before coding.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I consciously design my services to be **stateless** for easier horizontal scaling.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I believe technical debt is an acceptable trade-off for rapid prototyping and initial feature delivery.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I find pleasure in simplifying an overly complex architecture through refactoring the initial design.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I document **Architectural Decision Records (ADRs)** to justify major structural choices.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I prioritize high cohesion and low coupling in all my component designs.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+"I design my projects to be easily deployable using **Containerization** (e.g., Docker).",Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+"I enforce strict **separation of concerns** between the presentation, business, and data layers.",Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I believe every function/method should be small enough to fit on a single screen.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I establish **coding standards** and linting rules before writing the first line of production code.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I model real-world concepts using **Domain-Driven Design (DDD)** principles in my code.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+"I design for fault tolerance, assuming network or service failures are inevitable.",Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I believe clear naming conventions for variables and functions are a form of architectural documentation.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+"I always consider security implications (e.g., input validation) at the design phase.",Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I prefer **event-driven architecture** over traditional request-response models for complex flows.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+"I believe the architecture should be flexible enough to allow easy technology swaps (e.g., database changes).",Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+"I use design patterns (e.g., Factory, Observer) consistently to solve common problems.",Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I visualize potential bottlenecks and failure points during the design phase.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I make a conscious effort to minimize external dependencies to simplify maintenance.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I value simplicity and elegance in a design over a solution that is merely functional.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I have a dedicated 'spike' or research phase before committing to any major new technology.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+"I find enjoyment in optimizing the data structure choices (e.g., list vs. hash map) for performance.",Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I always consider future needs and backward compatibility when defining an API endpoint.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I use **TDD (Test-Driven Development)** principles to guide my architectural choices.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I believe the time spent drawing out the system diagram is always recovered during implementation.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I prefer abstracting complex logic behind a clean interface (encapsulation).,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I actively review and challenge the design decisions of my teammates.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I ensure that the data flow through the system is linear and easy to trace.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I use a framework's built-in features completely before resorting to custom solutions.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I model authentication and authorization into the initial design of every service.,Strongly Disagree,Disagree,Agree,Strongly Agree,Architectural Design & Planning
+I find the greatest satisfaction in successfully connecting two entirely disparate systems via a clean API.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I always treat external **APIs as black boxes** and insulate my code from their specific implementation details.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I enforce semantic versioning (Major.Minor.Patch) for all shared libraries and APIs I create.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I write extensive **integration tests** to ensure different components interact correctly.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+"I use **Message Queues** (e.g., Kafka, RabbitMQ) for asynchronous communication between services.",Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I am meticulous about documenting API request/response formats and error codes.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I use **dependency injection** extensively to manage object creation and relationships.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I view circular dependencies as an immediate red flag that requires architectural refactoring.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I prefer using RESTful APIs over GraphQL or RPC when simplicity is paramount.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I use **Circuit Breakers** or similar patterns to gracefully handle external service failures.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I actively monitor the latency and performance of all my external integrations.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+"I prefer breaking a large application into smaller, independent microservices.",Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I utilize mocking and stubbing heavily to isolate module dependencies during unit testing.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+"I ensure that all public interfaces have clear, well-defined boundaries.",Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+"I believe every module or component should have a single, clearly defined responsibility (SRP).",Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+"I automatically generate API documentation (e.g., using Swagger/OpenAPI) rather than writing it manually.",Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I am cautious about adding new third-party libraries due to dependency bloat and security risks.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+"I ensure my services communicate over secure, encrypted protocols (e.g., HTTPS, mTLS).",Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I use **SDKs or wrappers** to consume external APIs to abstract away HTTP details.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I design my modules to be replaceable without affecting the rest of the application (plug-and-play).,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+"I version my APIs (e.g., /v1/users) to manage changes without breaking existing clients.",Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I enjoy solving complex data transformation problems during system integration.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I have successfully migrated a large application from one database technology to another.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I find the process of normalizing database tables to be highly satisfying.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I ensure my services can automatically retry failed external requests safely.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I believe every change to a public API should involve a formal review process.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I use separate databases or schemas for different microservices to enforce separation.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I prefer using immutable data structures to simplify state management across modules.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I meticulously audit my project dependencies for known security vulnerabilities.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I believe in using robust **Data Validation** at every service boundary.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I minimize the amount of configuration needed to stand up a new instance of my service.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I find the challenge of integrating legacy systems with modern ones intellectually stimulating.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I use **feature flags** to decouple deployment from release for integration changes.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I prefer asynchronous communication over synchronous blocking calls for external requests.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I document the data contracts (schemas) for all messages published to a queue.,Strongly Disagree,Disagree,Agree,Strongly Agree,Integration & Modularity
+I regularly allocate personal time to learn and prototype with technologies completely outside my comfort zone.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+"I believe in the 'fail fast' mentality, prioritizing speed of testing over code quality in prototypes.",Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+"I find the process of using **Generative AI** (e.g., Copilot, ChatGPT) to assist with new code creation highly valuable.",Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I am quick to dismiss an old tool if a new one promises a significant speed improvement.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I participate in hackathons or side projects specifically to build something novel that solves an unsolved problem.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I intentionally introduce experimental features into production under strict canary release conditions.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I believe that the best solutions often come from merging two previously unrelated technologies.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+"I am more motivated by building a proof-of-concept than by refactoring existing, stable code.",Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+"I consider the time spent learning a new language/framework to be an investment, not a cost.",Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I regularly contribute code or ideas to **open-source projects** outside my main work.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I prefer working with beta or early-release software to explore cutting-edge features.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I use no-code/low-code platforms to rapidly spin up basic integrations or UI prototypes.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I maintain a personal repository of reusable code snippets and prototypes.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I am comfortable deleting a week's worth of code if the initial approach proves fundamentally flawed.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+"I believe every problem, no matter how small, can be solved by writing a script for it.",Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I actively monitor tech news and blogs to identify upcoming trends before they become mainstream.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I encourage teammates to dedicate time to experimentation outside of assigned project work.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I enjoy solving problems that have no existing Google or Stack Overflow answer.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I am confident in my ability to teach myself a new programming language in less than a week.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I prefer **polyglot persistence** (using multiple database types) to fit data needs perfectly.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I believe the fastest path to a solution is trying to break the system in novel ways.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I design prototypes with the intent that they might eventually become production systems.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I find creative solutions by looking at problems from a completely non-technical perspective.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I use tools like **Jupyter Notebooks** or REPL environments for rapid experimentation.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I have submitted a technical proposal or presentation at a conference or internal forum.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+"I enjoy the challenge of working with hardware (e.g., microcontrollers, IoT devices).",Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I actively try to find ways to simplify existing technical processes through automation.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+"I believe in adopting solutions from other industries (e.g., aerospace, finance) into software development.",Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I am primarily motivated by the intellectual puzzle of creation rather than the final delivery.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+I have used augmented reality or virtual reality in a prototype.,Strongly Disagree,Disagree,Agree,Strongly Agree,Innovation & Prototyping
+"I find debugging a complex, multi-threaded issue to be the most satisfying part of development.",Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I believe code that is not covered by **unit tests** is essentially broken.,Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I maintain **100% test coverage** for all core business logic.,Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+"I enjoy the process of **refactoring** old, brittle code to improve clarity and reduce technical debt.",Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I prioritize writing comprehensive logs and metrics (observability) over writing comments.,Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+"I use specialized debugging tools (e.g., profilers, heap analyzers) rather than relying solely on print statements.",Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I aggressively pursue the root cause of an intermittent bug until it is permanently fixed.,Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+"I believe every production bug should result in a new, automated test case.",Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I consider **technical debt** to be a core metric that must be actively managed and reduced.,Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+"I ensure my logs are structured (e.g., JSON format) for easy searching and analysis.",Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I prefer writing automated end-to-end tests over manual quality assurance checks.,Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I use **Chaos Engineering** principles to test the resilience of my system in production.,Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I set up automated alerts and monitoring that proactively notify me of potential issues.,Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+"I regularly review the performance metrics (e.g., response time, memory usage) of my services.",Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+"I write clear, detailed commit messages that explain the 'why' and 'what' of the change.",Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I use **static analysis tools** and security scanners as part of my continuous integration pipeline.,Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I prioritize fixing security flaws over adding new features.,Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I automate the deployment process to minimize human error during maintenance releases.,Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+"I believe that code reviews are primarily a chance to catch logical errors, not syntax errors.",Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I treat every error message as an explicit instruction on what test case I need to write next.,Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I am comfortable rolling back a bad deployment immediately if monitoring detects an issue.,Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I enjoy the challenge of optimizing slow-running SQL queries or database interactions.,Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I enforce immutable infrastructure (servers and containers are never modified after deployment).,Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+"I believe the documentation is the most likely source of bugs, so I keep it minimal.",Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I use a dedicated bug tracking system to manage and prioritize reported issues.,Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I run performance benchmarks before and after every major code change.,Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I am skilled at reading stack traces and correlating them across multiple services.,Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I use feature branches and pull requests for all non-trivial changes to the codebase.,Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I believe in using **linters** to enforce consistent style and reduce cognitive load.,Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I prioritize reducing the time it takes to set up a clean development environment.,Strongly Disagree,Disagree,Agree,Strongly Agree,Debugging & Maintenance
+I believe the primary goal of documentation is to onboard a **new programmer** in under an hour.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+"I am meticulous about writing clear, concise **README** files for all my repositories.",Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+I prefer communicating complex technical ideas through visual diagrams rather than long paragraphs of text.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+"I actively participate in code reviews, providing detailed and constructive feedback.",Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+I believe pairing or mob programming is an efficient way to transfer complex knowledge.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+I treat my version control history (Git commits) as essential project documentation.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+"I proactively update documentation when I make a code change, even before the code is merged.",Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+I ensure that the project's setup and deployment steps are fully automated and documented.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+I believe the best kind of documentation is **self-documenting code** with clear naming.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+"I organize my files and directories using a logical, universally understood structure.",Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+"I use collaborative tools (e.g., Jira, Asana) effectively to manage shared tasks and dependencies.",Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+"I prefer asynchronous communication (email, chat) over interruptive meetings for technical discussions.",Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+I actively mentor junior developers on design principles and best practices.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+I ensure all API documentation includes working examples and use cases.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+I believe good communication is more important than brilliant code for team success.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+I use Wikis or internal knowledge bases to capture project context and domain knowledge.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+"I encourage the team to rotate roles (e.g., code reviewer, lead developer) to spread knowledge.",Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+I provide detailed notes on system monitoring and troubleshooting for production issues.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+I am comfortable presenting my complex technical design decisions to a non-technical audience.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+"I believe that writing clear, high-quality documentation is a form of code maintenance.",Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+I prioritize making my code accessible and readable to all team members.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+I use standard industry terminology to describe architectural components.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+I ensure that the purpose and input/output of every public function are clearly commented.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+I actively look for feedback from non-developers (e.g., product managers) on my work.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+I believe documentation should be generated directly from the source code whenever possible.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+I check documentation for accuracy before starting work on a new feature.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+I use screen-sharing or collaborative coding tools to fix bugs with teammates.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+I ensure my Git branches use clear, informative naming conventions.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+I write high-level system summaries for executives or external stakeholders.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation
+I believe that an excellent README is the single most important document in a repository.,Strongly Disagree,Disagree,Agree,Strongly Agree,Collaboration & Documentation

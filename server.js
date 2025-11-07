@@ -162,6 +162,116 @@ async function initDatabase() {
       )
     `);
 
+    // Food questions table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS food_questions (
+        id SERIAL PRIMARY KEY,
+        question_text TEXT NOT NULL,
+        option_a VARCHAR(255) NOT NULL,
+        option_b VARCHAR(255) NOT NULL,
+        option_c VARCHAR(255) NOT NULL,
+        option_d VARCHAR(255) NOT NULL,
+        category VARCHAR(255) NOT NULL
+      )
+    `);
+
+    // Food survey responses table (username as primary key, answers in single column)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS food_survey_responses (
+        username VARCHAR(255) PRIMARY KEY,
+        answers TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Movie questions table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS movie_questions (
+        id SERIAL PRIMARY KEY,
+        question_text TEXT NOT NULL,
+        option_a VARCHAR(255) NOT NULL,
+        option_b VARCHAR(255) NOT NULL,
+        option_c VARCHAR(255) NOT NULL,
+        option_d VARCHAR(255) NOT NULL,
+        category VARCHAR(255) NOT NULL
+      )
+    `);
+
+    // Movie survey responses table (username as primary key, answers in single column)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS movie_survey_responses (
+        username VARCHAR(255) PRIMARY KEY,
+        answers TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Programming questions table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS programming_questions (
+        id SERIAL PRIMARY KEY,
+        question_text TEXT NOT NULL,
+        option_a VARCHAR(255) NOT NULL,
+        option_b VARCHAR(255) NOT NULL,
+        option_c VARCHAR(255) NOT NULL,
+        option_d VARCHAR(255) NOT NULL,
+        category VARCHAR(255) NOT NULL
+      )
+    `);
+
+    // Programming survey responses table (username as primary key, answers in single column)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS programming_survey_responses (
+        username VARCHAR(255) PRIMARY KEY,
+        answers TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Sport questions table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS sport_questions (
+        id SERIAL PRIMARY KEY,
+        question_text TEXT NOT NULL,
+        option_a VARCHAR(255) NOT NULL,
+        option_b VARCHAR(255) NOT NULL,
+        option_c VARCHAR(255) NOT NULL,
+        option_d VARCHAR(255) NOT NULL,
+        category VARCHAR(255) NOT NULL
+      )
+    `);
+
+    // Sport survey responses table (username as primary key, answers in single column)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS sport_survey_responses (
+        username VARCHAR(255) PRIMARY KEY,
+        answers TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Team questions table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS team_questions (
+        id SERIAL PRIMARY KEY,
+        question_text TEXT NOT NULL,
+        option_a VARCHAR(255) NOT NULL,
+        option_b VARCHAR(255) NOT NULL,
+        option_c VARCHAR(255) NOT NULL,
+        option_d VARCHAR(255) NOT NULL,
+        category VARCHAR(255) NOT NULL
+      )
+    `);
+
+    // Team survey responses table (username as primary key, answers in single column)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS team_survey_responses (
+        username VARCHAR(255) PRIMARY KEY,
+        answers TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
 
 
     // Avatars table
@@ -258,6 +368,101 @@ async function initDatabase() {
       }
     }
 
+    // Load food questions from CSV data
+    const foodCount = await pool.query('SELECT COUNT(*) FROM food_questions');
+    if (parseInt(foodCount.rows[0].count) === 0) {
+      const csvPath = path.join(__dirname, 'food.csv');
+      if (fs.existsSync(csvPath)) {
+        const csvData = fs.readFileSync(csvPath, 'utf8');
+        const lines = csvData.split('\n').slice(1);
+        for (const line of lines) {
+          if (line.trim()) {
+            const [question, optionA, optionB, optionC, optionD, category] = line.split(',').map(item => item.trim().replace(/\r$/, ''));
+            await pool.query(
+              'INSERT INTO food_questions (question_text, option_a, option_b, option_c, option_d, category) VALUES ($1, $2, $3, $4, $5, $6)',
+              [question, optionA, optionB, optionC, optionD, category]
+            );
+          }
+        }
+      }
+    }
+
+    // Load movie questions from CSV data
+    const movieCount = await pool.query('SELECT COUNT(*) FROM movie_questions');
+    if (parseInt(movieCount.rows[0].count) === 0) {
+      const csvPath = path.join(__dirname, 'movie.csv');
+      if (fs.existsSync(csvPath)) {
+        const csvData = fs.readFileSync(csvPath, 'utf8');
+        const lines = csvData.split('\n').slice(1);
+        for (const line of lines) {
+          if (line.trim()) {
+            const [question, optionA, optionB, optionC, optionD, category] = line.split(',').map(item => item.trim().replace(/\r$/, ''));
+            await pool.query(
+              'INSERT INTO movie_questions (question_text, option_a, option_b, option_c, option_d, category) VALUES ($1, $2, $3, $4, $5, $6)',
+              [question, optionA, optionB, optionC, optionD, category]
+            );
+          }
+        }
+      }
+    }
+
+    // Load programming questions from CSV data
+    const programmingCount = await pool.query('SELECT COUNT(*) FROM programming_questions');
+    if (parseInt(programmingCount.rows[0].count) === 0) {
+      const csvPath = path.join(__dirname, 'programming.csv');
+      if (fs.existsSync(csvPath)) {
+        const csvData = fs.readFileSync(csvPath, 'utf8');
+        const lines = csvData.split('\n').slice(1);
+        for (const line of lines) {
+          if (line.trim()) {
+            const [question, optionA, optionB, optionC, optionD, category] = line.split(',').map(item => item.trim().replace(/\r$/, ''));
+            await pool.query(
+              'INSERT INTO programming_questions (question_text, option_a, option_b, option_c, option_d, category) VALUES ($1, $2, $3, $4, $5, $6)',
+              [question, optionA, optionB, optionC, optionD, category]
+            );
+          }
+        }
+      }
+    }
+
+    // Load sport questions from CSV data
+    const sportCount = await pool.query('SELECT COUNT(*) FROM sport_questions');
+    if (parseInt(sportCount.rows[0].count) === 0) {
+      const csvPath = path.join(__dirname, 'sport.csv');
+      if (fs.existsSync(csvPath)) {
+        const csvData = fs.readFileSync(csvPath, 'utf8');
+        const lines = csvData.split('\n').slice(1);
+        for (const line of lines) {
+          if (line.trim()) {
+            const [question, optionA, optionB, optionC, optionD, category] = line.split(',').map(item => item.trim().replace(/\r$/, ''));
+            await pool.query(
+              'INSERT INTO sport_questions (question_text, option_a, option_b, option_c, option_d, category) VALUES ($1, $2, $3, $4, $5, $6)',
+              [question, optionA, optionB, optionC, optionD, category]
+            );
+          }
+        }
+      }
+    }
+
+    // Load team questions from CSV data
+    const teamCount = await pool.query('SELECT COUNT(*) FROM team_questions');
+    if (parseInt(teamCount.rows[0].count) === 0) {
+      const csvPath = path.join(__dirname, 'team.csv');
+      if (fs.existsSync(csvPath)) {
+        const csvData = fs.readFileSync(csvPath, 'utf8');
+        const lines = csvData.split('\n').slice(1);
+        for (const line of lines) {
+          if (line.trim()) {
+            const [question, optionA, optionB, optionC, optionD, category] = line.split(',').map(item => item.trim().replace(/\r$/, ''));
+            await pool.query(
+              'INSERT INTO team_questions (question_text, option_a, option_b, option_c, option_d, category) VALUES ($1, $2, $3, $4, $5, $6)',
+              [question, optionA, optionB, optionC, optionD, category]
+            );
+          }
+        }
+      }
+    }
+
     console.log('Database initialized successfully');
   } catch (err) {
     console.error('Database initialization error:', err);
@@ -307,6 +512,10 @@ app.get('/contact', requireAuth, (req, res) => {
   res.render('contact');
 });
 
+app.get('/survey01', requireAuth, (req, res) => {
+  res.render('survey01');
+});
+
 app.get('/index', requireAuth, (req, res) => {
   res.render('index');
 });
@@ -321,6 +530,26 @@ app.get('/teacher-survey', requireAuth, (req, res) => {
 
 app.get('/extra-survey', requireAuth, (req, res) => {
   res.render('extra-survey', { user: req.session.user });
+});
+
+app.get('/food-survey', requireAuth, (req, res) => {
+  res.render('food-survey', { user: req.session.user });
+});
+
+app.get('/movie-survey', requireAuth, (req, res) => {
+  res.render('movie-survey', { user: req.session.user });
+});
+
+app.get('/programming-survey', requireAuth, (req, res) => {
+  res.render('programming-survey', { user: req.session.user });
+});
+
+app.get('/sport-survey', requireAuth, (req, res) => {
+  res.render('sport-survey', { user: req.session.user });
+});
+
+app.get('/team-survey', requireAuth, (req, res) => {
+  res.render('team-survey', { user: req.session.user });
 });
 
 app.get('/api/test-db', async (req, res) => {
@@ -397,6 +626,121 @@ app.get('/api/extra-questions', async (req, res) => {
 app.get('/api/extra-categories', async (req, res) => {
   try {
     const result = await pool.query('SELECT DISTINCT category FROM extra_questions');
+    res.json(result.rows.map(row => row.category));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/food-questions', async (req, res) => {
+  try {
+    const categories = await pool.query('SELECT DISTINCT category FROM food_questions');
+    const allQuestions = [];
+    for (const cat of categories.rows) {
+      const questions = await pool.query('SELECT * FROM food_questions WHERE category = $1 ORDER BY RANDOM() LIMIT 3', [cat.category]);
+      allQuestions.push(...questions.rows);
+    }
+    res.json(allQuestions.sort(() => Math.random() - 0.5).slice(0, 10));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/food-categories', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT DISTINCT category FROM food_questions');
+    res.json(result.rows.map(row => row.category));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/movie-questions', async (req, res) => {
+  try {
+    const categories = await pool.query('SELECT DISTINCT category FROM movie_questions');
+    const allQuestions = [];
+    for (const cat of categories.rows) {
+      const questions = await pool.query('SELECT * FROM movie_questions WHERE category = $1 ORDER BY RANDOM() LIMIT 3', [cat.category]);
+      allQuestions.push(...questions.rows);
+    }
+    res.json(allQuestions.sort(() => Math.random() - 0.5).slice(0, 10));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/movie-categories', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT DISTINCT category FROM movie_questions');
+    res.json(result.rows.map(row => row.category));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/programming-questions', async (req, res) => {
+  try {
+    const categories = await pool.query('SELECT DISTINCT category FROM programming_questions');
+    const allQuestions = [];
+    for (const cat of categories.rows) {
+      const questions = await pool.query('SELECT * FROM programming_questions WHERE category = $1 ORDER BY RANDOM() LIMIT 3', [cat.category]);
+      allQuestions.push(...questions.rows);
+    }
+    res.json(allQuestions.sort(() => Math.random() - 0.5).slice(0, 10));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/programming-categories', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT DISTINCT category FROM programming_questions');
+    res.json(result.rows.map(row => row.category));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/sport-questions', async (req, res) => {
+  try {
+    const categories = await pool.query('SELECT DISTINCT category FROM sport_questions');
+    const allQuestions = [];
+    for (const cat of categories.rows) {
+      const questions = await pool.query('SELECT * FROM sport_questions WHERE category = $1 ORDER BY RANDOM() LIMIT 3', [cat.category]);
+      allQuestions.push(...questions.rows);
+    }
+    res.json(allQuestions.sort(() => Math.random() - 0.5).slice(0, 10));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/sport-categories', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT DISTINCT category FROM sport_questions');
+    res.json(result.rows.map(row => row.category));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/team-questions', async (req, res) => {
+  try {
+    const categories = await pool.query('SELECT DISTINCT category FROM team_questions');
+    const allQuestions = [];
+    for (const cat of categories.rows) {
+      const questions = await pool.query('SELECT * FROM team_questions WHERE category = $1 ORDER BY RANDOM() LIMIT 3', [cat.category]);
+      allQuestions.push(...questions.rows);
+    }
+    res.json(allQuestions.sort(() => Math.random() - 0.5).slice(0, 10));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/team-categories', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT DISTINCT category FROM team_questions');
     res.json(result.rows.map(row => row.category));
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -517,6 +861,96 @@ app.post('/api/extra-survey-responses', async (req, res) => {
   }
 });
 
+app.post('/api/food-survey-responses', async (req, res) => {
+  const { username, answers } = req.body;
+  
+  if (!username || !answers || answers.length !== 10) {
+    return res.status(400).json({ error: 'Must provide username and exactly 10 answers' });
+  }
+
+  try {
+    await pool.query(
+      'INSERT INTO food_survey_responses (username, answers) VALUES ($1, $2) ON CONFLICT (username) DO UPDATE SET answers = $2, created_at = CURRENT_TIMESTAMP',
+      [username, JSON.stringify(answers)]
+    );
+    res.json({ message: 'Food survey responses saved successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/movie-survey-responses', async (req, res) => {
+  const { username, answers } = req.body;
+  
+  if (!username || !answers || answers.length !== 10) {
+    return res.status(400).json({ error: 'Must provide username and exactly 10 answers' });
+  }
+
+  try {
+    await pool.query(
+      'INSERT INTO movie_survey_responses (username, answers) VALUES ($1, $2) ON CONFLICT (username) DO UPDATE SET answers = $2, created_at = CURRENT_TIMESTAMP',
+      [username, JSON.stringify(answers)]
+    );
+    res.json({ message: 'Movie survey responses saved successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/programming-survey-responses', async (req, res) => {
+  const { username, answers } = req.body;
+  
+  if (!username || !answers || answers.length !== 10) {
+    return res.status(400).json({ error: 'Must provide username and exactly 10 answers' });
+  }
+
+  try {
+    await pool.query(
+      'INSERT INTO programming_survey_responses (username, answers) VALUES ($1, $2) ON CONFLICT (username) DO UPDATE SET answers = $2, created_at = CURRENT_TIMESTAMP',
+      [username, JSON.stringify(answers)]
+    );
+    res.json({ message: 'Programming survey responses saved successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/sport-survey-responses', async (req, res) => {
+  const { username, answers } = req.body;
+  
+  if (!username || !answers || answers.length !== 10) {
+    return res.status(400).json({ error: 'Must provide username and exactly 10 answers' });
+  }
+
+  try {
+    await pool.query(
+      'INSERT INTO sport_survey_responses (username, answers) VALUES ($1, $2) ON CONFLICT (username) DO UPDATE SET answers = $2, created_at = CURRENT_TIMESTAMP',
+      [username, JSON.stringify(answers)]
+    );
+    res.json({ message: 'Sport survey responses saved successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/team-survey-responses', async (req, res) => {
+  const { username, answers } = req.body;
+  
+  if (!username || !answers || answers.length !== 10) {
+    return res.status(400).json({ error: 'Must provide username and exactly 10 answers' });
+  }
+
+  try {
+    await pool.query(
+      'INSERT INTO team_survey_responses (username, answers) VALUES ($1, $2) ON CONFLICT (username) DO UPDATE SET answers = $2, created_at = CURRENT_TIMESTAMP',
+      [username, JSON.stringify(answers)]
+    );
+    res.json({ message: 'Team survey responses saved successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.post('/api/website-survey-responses', async (req, res) => {
   const { username, answers } = req.body;
   
@@ -614,6 +1048,36 @@ app.post('/api/set-avatar', async (req, res) => {
     await pool.query('UPDATE users SET profile_picture = $1 WHERE id = $2', [avatarUrl, req.session.user.id]);
     req.session.user.profile_picture = avatarUrl;
     res.json({ message: 'Avatar updated', avatarUrl });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/responses', async (req, res) => {
+  if (!req.session.user) {
+    return res.status(401).json({ error: 'Not logged in' });
+  }
+  
+  try {
+    const { responses } = req.body;
+    const username = req.session.user.username;
+    
+    // Create survey01_responses table if it doesn't exist
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS survey01_responses (
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(255) NOT NULL,
+        responses TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    await pool.query(
+      'INSERT INTO survey01_responses (username, responses) VALUES ($1, $2)',
+      [username, JSON.stringify(responses)]
+    );
+    
+    res.json({ message: 'Survey responses saved successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
